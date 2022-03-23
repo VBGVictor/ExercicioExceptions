@@ -6,25 +6,25 @@ import java.util.Date;
 import java.util.Scanner;
 
 import model.entities.Reservation;
+import model.exceptions.ErroPersonalizadoException;
 
 public class Program {
 
-	public static void main(String[] args) throws ParseException {//O Throws mostra que o Main não precisa cuidar da excessão que esta ocorrendo
+	public static void main(String[] args) {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		Scanner sc = new Scanner(System.in);
 		
-		System.out.print("Room number: ");
-		int number = sc.nextInt();
-		System.out.print("Check-in date (dd/mm/yyyy): ");
-		Date checkIn = sdf.parse(sc.next());
-		System.out.print("Check-Out date (dd/mm/yyyy): ");
-		Date checkOut = sdf.parse(sc.next());
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			Scanner sc = new Scanner(System.in);
 		
-		if (!checkOut.after(checkIn)) {
-			System.out.println("Error in reservation: Check-out date must be after check-in date");
-		}
-		else {
+		try {	
+			System.out.print("Room number: ");
+			int number = sc.nextInt();
+			System.out.print("Check-in date (dd/mm/yyyy): ");
+			Date checkIn = sdf.parse(sc.next());
+			System.out.print("Check-Out date (dd/mm/yyyy): ");
+			Date checkOut = sdf.parse(sc.next());
+			
+			
 			Reservation reservation = new Reservation(number, checkIn, checkOut);
 			System.out.println("Reservation: " + reservation);
 			
@@ -35,19 +35,20 @@ public class Program {
 			System.out.print("Check-Out date (dd/mm/yyyy): ");
 			checkOut = sdf.parse(sc.next());
 			
-				String error = reservation.updateDates(checkIn, checkOut);
-				if (error != null) {
-					System.out.println("Error in reservation: " + error);
-				}else {	
-					System.out.println("Reservation: " + reservation);
-			}
-			
-		
+			reservation.updateDates(checkIn, checkOut);
+			System.out.println("Reservation: " + reservation);
+		}
+		catch(ParseException e) {
+			System.out.println("Invaled date format!");
+		}
+		catch(ErroPersonalizadoException e) {
+			System.out.println("Error in reservation: "+ e.getMessage());
+		}
+		catch(RuntimeException e) {
+			System.out.println("Unexpected error!");
 		}
 		
-		
-		
-sc.close();
+		sc.close();
 	}
 
 }
